@@ -53,4 +53,9 @@ async function receive(){
 
 async function RunCommand(command){
     await send(" "+command);
+    let data = await receive();
+    if (data.length == 1 && data != "1"){
+        data += await receive();
+    }
+    console.log(data);
 }
