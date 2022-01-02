@@ -50,3 +50,7 @@ async function receive(){
     return decoder.decode(data.value);
     
 }
+
+async function RunCommand(command){
+    await send(command);
+}
