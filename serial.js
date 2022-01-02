@@ -52,5 +52,5 @@ async function receive(){
 }
 
 async function RunCommand(command){
-    await send(command);
+    await send(" "+command);
 }
