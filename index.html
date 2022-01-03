@@ -19,21 +19,42 @@
         <p style="margin: 0;">Pre-Release 1.01</p>
         
     </div>
-    <div id="connectUI" style="z-index: 99; background-color: rgb(0, 129, 235); position: absolute; padding: 0; margin: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;">
+        <div id="connectUI" style="z-index: 99; background-color: rgb(0, 129, 235); position: absolute; padding: 0; margin: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;">
         <p onclick="getDevice()" id="connectBtn">Connect</p>
     </div>
     
 
-    <div class="config-menu" style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;">
-        <div class="keypad" style="padding-top: 30px; padding-bottom: 150px; padding-left:  70px; padding-right: 70px; border: 3px solid white; border-radius: 20px; box-shadow: 0px 20px 0px 0px white;">
-            <div style="display: flex; justify-content: center; column-gap: 30px;">
-                <div id="left-btn" class="keyup" style=" border-radius: 10px; top: -10px;" onmousedown="setting('left-btn')"><p style="margin: 0; padding: 0;">D</p></div>
-                <div id="right-btn" class="keyup" style="border-radius: 10px; top: -10px;" onmousedown="setting('right-btn')"><p style="margin: 0; padding: 0;">F</p></div>
+    <div class="config-menu" style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+        <div id="keypad-container" style="display: flex; justify-content: center; align-items: center;">
+            <div class="keypad" style="padding-top: 30px; padding-bottom: 120px; padding-left:  40px; padding-right: 40px; border: 3px solid white; border-radius: 20px; box-shadow: 0px 20px 0px 0px white;">
+                <div style="display: flex; justify-content: center; column-gap: 30px;">
+                    <div id="left-btn" class="keyup" style=" border-radius: 10px; top: -10px;" onmousedown="setting('left-btn')"><p style="margin: 0; padding: 0;">D</p></div>
+                    <div id="right-btn" class="keyup" style="border-radius: 10px; top: -10px;" onmousedown="setting('right-btn')"><p style="margin: 0; padding: 0;">F</p></div>
+                </div>
+
+                <div style="display: flex; justify-content: center; column-gap: 190px;">
+                    <div id="left-led" class="led ledon" onmousedown="setting('left-led')"></div>
+                    <div id="right-led" class="led ledon" onmousedown="setting('right-led')"></div>
+                </div>
+                
             </div>
             
         </div>
-        
+        <!-- 
+            <div id="debug-window" style="margin-top: 50px; width: 376px;">
+            <p style="padding: 10px; width: 50px; text-align: center; margin: 0;" class="btn" id="debug-btn">Debug</p>
+            <div id="console" class="consoleout">
+                <p>Type some commands</p>
+            </div>
+            <div style="width: 100%; display: flex;">
+                <input placeholder="command" id="command-input" type="text" style="width: 80%; height: 40px; background-color: rgb(105, 105, 105); font-size: 18px;">
+                <p style="padding: 10px; width: 50px; text-align: center; margin: 0;" class="btn" id="send-btn">Send</p>
+            </div>
+        </div>
+         -->
     </div>
+
+    
 
     
 
@@ -50,11 +71,36 @@
         sound.src = "assets/sounds/click.mp3";
         sound.play();
         document.getElementById("connectUI").classList.add("fadeout");
+        console.log(data);
 
         let keyData = data.split(":")[1].split(";");
-        buttons = keyData;
-        document.getElementById("left-btn").innerHTML = `<p style="margin: 0; padding: 0;">${buttons[0].toUpperCase()}</p>`;
-        document.getElementById("right-btn").innerHTML = `<p style="margin: 0; padding: 0;">${buttons[1].toUpperCase()}</p>`;
+        buttons[0] = keyData[0][0];
+        buttons[1] = keyData[1][0];
+        console.log(buttons[1]);
+
+        document.getElementById("left-btn").innerHTML = `<p style="margin: 0; padding: 0;">${buttons[0][0].toUpperCase()}</p>`;
+        document.getElementById("right-btn").innerHTML = `<p style="margin: 0; padding: 0;">${buttons[1][0].toUpperCase()}</p>`;
+
+        let ledData = data.split("!")[1].split("@");
+        leds[0] = ledData[0];
+        leds[1] = ledData[1];
+
+        if (leds[0] == 0){
+            document.getElementById("left-led").className = "led ledoff";
+        }else{
+            document.getElementById("left-led").className = "led ledon";
+        }
+
+        if (leds[1] == 0){
+            document.getElementById("right-led").className = "led ledoff";
+        }else{
+            document.getElementById("right-led").className = "led ledon";
+        }
+        
+
+        console.log(ledData);
+
+        
 
         setTimeout(function(){
             document.getElementById("connectUI").remove();

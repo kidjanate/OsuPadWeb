@@ -1,4 +1,5 @@
 let buttons = ["d", "f"];
+let leds = [0,0];
 
 document.onkeydown = function(e) {
     if (e.key == buttons[0]) {
@@ -20,11 +21,12 @@ document.onkeyup = function(e) {
 
 let settingsList = {
     "left-btn": {
+        "window" : true,
         "title" : "Keybinding",
         "content" : `
         <div style="display: flex; justify-content: center; align-items: center; height: 70%; flex-direction: column;">
             <p>Click to change</p>
-            <input type="text" style="width: 70px; height: 70px;" id="key-input" maxlength=1 onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" autocomplete="off"></input>
+            <input class="binding" type="text" style="width: 70px; height: 70px;" id="key-input" maxlength=1 onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" autocomplete="off"></input>
         </div>
         `,
         "onclose" : async ()=>{
@@ -57,11 +59,12 @@ let settingsList = {
         }
     },
     "right-btn": {
+        "window" : true,
         "title" : "Keybinding",
         "content" : `
         <div style="display: flex; justify-content: center; align-items: center; height: 70%; flex-direction: column;">
             <p>Click to change</p>
-            <input type="text" style="width: 70px; height: 70px;" id="key-input" maxlength=1 onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" autocomplete="off"></input>
+            <input class="binding" type="text" style="width: 70px; height: 70px;" id="key-input" maxlength=1 onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" autocomplete="off"></input>
         </div>
         `,
         "onapply" : async ()=>{
@@ -85,13 +88,66 @@ let settingsList = {
                 document.getElementById("right-btn").innerHTML = `<p style="margin: 0; padding: 0;">${key.toUpperCase()}</p>`;
             }
         }
+    },
+    "left-led": {
+        "window" : false,
+        "onapply" : async ()=>{
+            if (leds[0] == 0){
+                let command = " setled-left " + 1;
+                await send(command);
+                let data = await receive();
+                if(data[0] == "1"){
+                    leds[0] = 1;
+                }
+                document.getElementById("left-led").className = "led ledon";
+            }else{
+                let command = " setled-left " + 0;
+                await send(command);
+                let data = await receive();
+                if(data[0] == "1"){
+                    leds[0] = 0;
+                }
+                document.getElementById("left-led").className = "led ledoff";
+            }
+        }
+    },
+    "right-led": {
+        "window" : false,
+        "onapply" : async ()=>{
+            console.log(leds[0]);
+            if (leds[1] == 0){
+                let command = " setled-right " + 1;
+                await send(command);
+                console.log("sent");
+                let data = await receive();
+                console.log(data);
+                if(data[0] == "1"){
+                    leds[1] = 1;
+                }
+                document.getElementById("right-led").className = "led ledon";
+            }else{
+                let command = " setled-right " + 0;
+                await send(command);
+                console.log("sent");
+                let data = await receive();
+                console.log(data);
+                if(data[0] == "1"){
+                    leds[1] = 0;
+                }
+                document.getElementById("right-led").className = "led ledoff";
+            }
+        }
     }
 }
 
 
 function setting(key){
     let settings = settingsList[key];
-    createWindow(settings.title, settings.content, settings.onclose, settings.onapply);
+    if(settings.window)
+        createWindow(settings.title, settings.content, settings.onclose, settings.onapply);
+    else{
+        settings.onapply();
+    }
 }
 
 
@@ -145,3 +201,15 @@ function createWindow(title, init, onclose, onapply){
         }, 200);
     }
 }
+
+
+/*
+document.getElementById("debug-btn").onclick = function(){
+    let console = document.getElementById("console");
+    if (console.className == "consoleout"){
+        document.getElementById("console").className = "consolein";
+    }else{
+        document.getElementById("console").className = "consoleout";
+    }
+    
+}*/
